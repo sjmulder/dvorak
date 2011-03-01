@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Dvorak converter</title>
+		<style>
+			body { width: 500px; margin: 40pt auto; }
+			body, h1 { font-family: sans-serif; font-size: 11pt; }
+			h1 { font-weight: normal; font-size: 20pt; text-align: center; margin-bottom: 20pt; }
+			textarea { font-family: sans-serif; font-size: 15pt; width: 100%; }
+			label { color: #888; }
+			p.arrow { text-align: center; font-size: 20pt; margin: 0; }
+			p.copy { text-align: center; font-size: 9pt; margin-top: 20pts; }
+		</style>
+	</head>
+	<form>
+		<h1>Qwerty-dvorak encoder</h1>
+		<noscript>
+			<p>This page requires JavaScript. Please enable it in your browser.</p>
+		</noscript>
+		<div class="withScript" style="display: none">
+			<p>
+				<label for="qwerty">Qwerty:</label><br>
+				<textarea id="qwerty" rows="3" autofocus></textarea>
+			</p>
+			<p class="arrow">⇅</p>
+			<p>
+				<label for="dvorak">Dvorak:</label><br>
+				<textarea id="dvorak" rows="3"></textarea>
+			</p>
+			<p class="copy">
+				By <a href="http://whyhello.im/sijmen">Sijmen Mulder</a> |
+				<a href="http://github.com/sjmulder/dvorak">source on GitHub</a>
+			</p>
+		</div>
+	</form>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+	<script>
+		var qwerty = 
+			'~!@#$%^&*()_+' + '`1234567890-='  +
+			'QWERTYUIOP{}|' + 'qwertyuiop[]\\' +
+			'ASDFGHJKL:"'   + 'asdfghjkl;\''   +
+			'ZXCVBNM<>?'    + 'zxcvbnm,./';
+		var dvorak =
+			'~!@#$%^&*(){}' + '`1234567890[]'   +
+			'"<>PYFGCRL?+|' + '\',.pyfgcrl/=\\' +
+			'AOEUIDHTNS_'   + 'aoeuidhtns_'     +
+			':QJKXBMWVZ'    + ';qjkxbmwvz';
+		
+		var qtod = [], dtoq = [];
+		
+		var i;
+		for (i = qwerty.length - 1; i >= 0; i--) {
+			var qwertyChar = qwerty[i];
+			var dvorakChar = dvorak[i];
+			qtod[qwertyChar] = dvorakChar;
+			dtoq[dvorakChar] = qwertyChar;
+		}
+		
+		function autoConvert(sourceBox, destinationBox, table) {
+			sourceBox.keyup(function() {
+				var sourceValue = sourceBox.val();
+				var destValue = '';
+				
+				var i;
+				for (i = sourceValue.length - 1; i >= 0; i--) {
+					var sourceChar = sourceValue[i];
+					var destChar = table[sourceChar] || sourceChar;
+					destValue = destChar + destValue;
+				};
+				
+				destinationBox.val(destValue);
+			});
+		};
+		
+		jQuery(function() {
+			$('.withScript').show();
+			
+			qwertyBox = jQuery('#qwerty');
+			dvorakBox = jQuery('#dvorak');
+			
+			autoConvert(qwertyBox, dvorakBox, qtod);
+			autoConvert(dvorakBox, qwertyBox, dtoq);
+		});
+	</script>
